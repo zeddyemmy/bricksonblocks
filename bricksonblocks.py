@@ -591,6 +591,19 @@ layout_sidebar = html.Div([
                         'margin-top': 25,
                         'margin-left': 30}),
 
+
+        html.Div([
+            dcc.Link(children='Home',
+                     href='/home',
+                     style={'font-size':16,
+                            'margin-top': 12,
+                            'margin-left': 30,
+                            'color':'#696969',
+                            'text-decoration': 'none'}),
+        ],
+        style={'margin-top':12}
+        ),
+
         html.Div([
             dcc.Link(children='Dashboard',
                      href='/investor-dashboard',
@@ -681,15 +694,43 @@ layout_sidebar = html.Div([
                         'margin-top': 12,
                         'margin-left': 30}),
         
-        html.Div(children='Inspect',
-                 style={'font-size':12,
-                        'margin-top': 6,
-                        'margin-left': 60}),
+
+        html.Div([
+            dcc.Link(children='Inspect',
+                     href='/ownership',
+                     style={'font-size':12,
+                            'color':'#696969',
+                            'text-decoration': 'none'}),
+        ],
+        style={'margin-top':6,
+               'margin-left': 60,}
+        ),
+
+
+# =============================================================================
+#         html.Div(children='Inspect',
+#                  style={'font-size':12,
+#                         'margin-top': 6,
+#                         'margin-left': 60}),
+# =============================================================================
         
-        html.Div(children='Generate',
-                 style={'font-size':12,
-                        'margin-top': 6,
-                        'margin-left': 60}),
+        html.Div([
+            dcc.Link(children='Generate',
+                     href='/generate-contract',
+                     style={'font-size':12,
+                            'color':'#696969',
+                            'text-decoration': 'none'}),
+        ],
+        style={'margin-top':6,
+               'margin-left': 60,}
+        ),
+
+# =============================================================================
+#         html.Div(children='Generate',
+#                  style={'font-size':12,
+#                         'margin-top': 6,
+#                         'margin-left': 60}),
+# =============================================================================
         
         html.Div(children='Interact',
                  style={'font-size':12,
@@ -740,16 +781,34 @@ layout_ownership = html.Div(
         
         html.Div([
             
-            #Top row, identifiers
             html.Div([
-    
-                #Title
-                html.H1(children='Ownership Profile',
-                        className='nine columns'
+                                    
+                html.Div([
+                    html.H5(
+                        children='Ownership',
+                        style={'font-weight': 'bold',}
+                    ),
+                ],
+                className='nine columns',
+                style={'margin-left':30},
                 ),
-    
-    
-                ], className='row'
+                
+                html.Div([
+                    html.Img(
+                        src=app.get_asset_url('calendar.png')
+                    ),
+                ],
+                className='three columns',
+                style={'float':'right',
+                       'margin-left':10,
+                       'margin-right':0},
+                ),
+                
+            ],
+                
+            className='row',
+            style={'margin-top':30,
+                   'margin-bottom':30},
             ),
     
 # =============================================================================
@@ -771,8 +830,9 @@ layout_ownership = html.Div(
                     ),
                                 
                 ],
-                className = 'seven columns',
-                style = {'margin-left': 30},
+                className = 'eight columns',
+                style = {'margin-left': 30,
+                         'width':'63.2%'},
                 ),
     
     
@@ -795,7 +855,25 @@ layout_ownership = html.Div(
             ),
     
     
-    
+            html.Div([
+                                    
+                html.Div([
+                    html.H5(
+                        children='Smart Contract Transactions',
+                        style={'font-weight': 'bold',}
+                    ),
+                ],
+                className='nine columns',
+                style={'margin-left':30},
+                ),
+                
+                
+            ],
+                
+            className='row',
+            style={'margin-top':30,
+                   'margin-bottom':30},
+            ),
     
         
             #fifth row, stacked area graphs
@@ -809,7 +887,7 @@ layout_ownership = html.Div(
                         columns=[{"name": i, "id": i} for i in transactions.columns],
                         data=transactions.to_dict(orient='records'),
                         style_table={
-                            'maxHeight': '500px',
+                            'maxHeight': '1000px',
                             'overflowY': 'scroll'
                         },
                         style_as_list_view=True,
@@ -822,6 +900,7 @@ layout_ownership = html.Div(
                     
                 ],
                 className = 'twelve columns',
+                style={'width':'97.5%'}
                 ),
         
             ],
@@ -841,7 +920,9 @@ layout_ownership = html.Div(
                         value='useless input for enabling callback prototyping',
                     ),
                                 
-                    ], className = 'ten columns',
+                    ],
+                    className = 'ten columns',
+                    style={'margin-top':1000}
                 ),
     
                 ], className = 'row',
@@ -888,7 +969,7 @@ def stacked_chart(nonsense):
         
     
     layout = go.Layout(
-        title='Equity',
+        title='Asset shares over time',
         showlegend=True,
         font={'family':'Cerebri Sans'},
         yaxis=dict(title='Percentage'),
@@ -974,7 +1055,7 @@ layout_investor_dashboard = html.Div(
                         style={'font-weight': 'bold',}
                     ),
                 ],
-                className='eight columns',
+                className='nine columns',
                 style={'margin-left':30},
                 ),
                 
@@ -984,7 +1065,9 @@ layout_investor_dashboard = html.Div(
                     ),
                 ],
                 className='three columns',
-                style={'margin-left':100},
+                style={'float':'right',
+                       'margin-left':10,
+                       'margin-right':0},
                 ),
                 
             ],
@@ -1404,25 +1487,28 @@ layout_listings = html.Div(
             
 
             html.Div([
+                                    
+                html.Div([
+                    html.H5(
+                        children='Listings',
+                        style={'font-weight': 'bold',}
+                    ),
+                ],
+                className='nine columns',
+                style={'margin-left':30},
+                ),
                 
                 html.Div([
-                    
-                    html.Div([
-                        html.H5(
-                            children='Listings',
-                            style={'font-weight':'bold'}
-                        ),
-                    ],
-                    style={},
+                    html.Img(
+                        src=app.get_asset_url('calendar.png')
                     ),
-                    
                 ],
-                
                 className='three columns',
-                style={'margin-left':30,},
+                style={'float':'right',
+                       'margin-left':10,
+                       'margin-right':0},
                 ),
-
-
+                
             ],
                 
             className='row',
@@ -1567,38 +1653,40 @@ layout_listings = html.Div(
 
 
 
-                html.Div([
-                    
-                    html.Div([
-                        html.H5(
-                            children='Listing6',
-                        ),
-                    ],
-                    style={'background-color':'#ffffff'},
-                    ),
-                    
-                ],
-                
-                className='three columns',
-                style={'margin-left':30,},
-                ),
-
-
-                html.Div([
-                    
-                    html.Div([
-                        html.H5(
-                            children='Listing7',
-                        ),
-                    ],
-                    style={'background-color':'#ffffff'},
-                    ),
-                    
-                ],
-                
-                className='three columns',
-                style={'margin-left':30,},
-                ),
+# =============================================================================
+#                 html.Div([
+#                     
+#                     html.Div([
+#                         html.H5(
+#                             children='Listing6',
+#                         ),
+#                     ],
+#                     style={'background-color':'#ffffff'},
+#                     ),
+#                     
+#                 ],
+#                 
+#                 className='three columns',
+#                 style={'margin-left':30,},
+#                 ),
+# 
+# 
+#                 html.Div([
+#                     
+#                     html.Div([
+#                         html.H5(
+#                             children='Listing7',
+#                         ),
+#                     ],
+#                     style={'background-color':'#ffffff'},
+#                     ),
+#                     
+#                 ],
+#                 
+#                 className='three columns',
+#                 style={'margin-left':30,},
+#                 ),
+# =============================================================================
 
 
             ],
@@ -1701,7 +1789,7 @@ layout_generate_contract = html.Div(
                     html.Div([
                         
                         html.Div([
-                            html.H4('Contract Name:'),
+                            html.H4('Financier Address:'),
                         ],
                         className='six columns',
                         ),
@@ -1709,7 +1797,7 @@ layout_generate_contract = html.Div(
                         
                         html.Div([
                             dcc.Input(
-                                id='contract-name'
+                                id='financier-address'
                             ),
                         ],
                         className='six columns',
@@ -1718,6 +1806,7 @@ layout_generate_contract = html.Div(
                     ],
                     className='row',
                     ),
+
                     
                 ],
                 
@@ -1852,6 +1941,189 @@ def generate_smart_contract(contract_name):
                                deposit_amount=30000,
                                tenant_address=tenant_address,
                                financier_address=financier_address)
+
+    
+    ```
+    '''
+    
+    
+    code = f'''
+    ```py
+    
+    
+    import smartpy as sp
+    
+    
+    
+    class House_123456789(sp.Contract):
+    
+    
+        def __init__(self,
+                     house_price,
+                     deposit_amount,
+                     base_rent,
+                     tenant_address,
+                     financier_address):
+    
+            self.init(house_price = house_price,
+                      equity_tenant = deposit_amount,
+                      equity_financier = house_price - deposit_amount,
+                      equity_crowd = 0,
+                      base_rent=base_rent,
+                      rent_received_financier = 0,
+                      rent_received_crowd = 0,
+                      tenant_address = tenant_address,
+                      financier_address = financier_address,
+                      crowd_addresses = [],
+                      crowd_equities = [],
+                      crowd_rents = [])
+    
+    
+        #%%
+        
+        def div(a, b):
+            return sp.nat(((a * 1000000000) // b) // 1000000000)
+    
+        
+        @sp.entry_point
+        def tenant_rental_payment_to_financier(self, params):
+            
+            sp.verify(sp.sender == self.data.tenant_address)
+            
+            sp.if self.data.equity_financier > 0:
+                self.data.rent_received_financier += abs(params.amount) * (self.data.equity_financier * 1000000 // self.data.house_price) // 1000000
+    
+                
+        @sp.entry_point
+        def tenant_rental_payment_to_crowd(self, params):
+            sp.if self.data.equity_crowd > 0:
+                self.data.rent_received_crowd += abs(params.amount) * (self.data.equity_crowd * 1000000 // self.data.house_price) // 1000000
+    
+    
+        @sp.entry_point
+        def tenant_rental_payment_to_all_crowd(self, params):
+    
+            sp.if self.data.equity_crowd > 0:
+                self.data.rent_received_crowd += abs(params.amount) * (self.data.equity_crowd * 1000000 // self.data.house_price) // 1000000
+    
+                self.data.crowd_equities = self.data.crowd_equities.rev()
+    
+                sp.for each_equity in self.data.crowd_equities:
+                    self.data.crowd_rents.push(1 * (each_equity * self.data.base_rent * 1000000000 // self.data.house_price) // 1000000000)
+    
+                #sp.for i in sp.range(0, sp.len(self.data.crowd_equities)):
+                #    self.data.crowd_rents[i] += i+7
+    
+                self.data.crowd_equities = self.data.crowd_equities.rev()
+    
+    
+        @sp.entry_point
+        def tenant_rental_payment_to_everyone(self, params):
+            sp.if self.data.equity_financier > 0:
+                self.data.rent_received_financier += abs(params.amount) * (self.data.equity_financier * 1000000 // self.data.house_price) // 1000000
+            sp.if self.data.equity_crowd > 0:
+                self.data.rent_received_crowd += abs(params.amount) * (self.data.equity_crowd * 1000000 // self.data.house_price) // 1000000
+    
+        #%%
+    
+        @sp.entry_point
+        def equity_from_financier_to_tenant(self, params):
+            self.data.equity_tenant += params.amount
+            sp.if self.data.equity_financier >= params.amount:
+                self.data.equity_financier = abs(self.data.equity_financier - params.amount)
+    
+    
+        @sp.entry_point
+        def equity_from_financier_to_crowd(self, params):
+            sp.if self.data.equity_financier >= params.amount:
+                self.data.equity_crowd += params.amount
+                self.data.equity_financier = abs(self.data.equity_financier - params.amount)
+    
+    
+        @sp.entry_point
+        def equity_from_crowd_to_tenant(self, params):
+            sp.if self.data.equity_crowd >= params.amount:
+                self.data.equity_tenant += params.amount
+                self.data.equity_crowd = abs(self.data.equity_crowd - params.amount)
+    
+        #%%
+    
+        @sp.entry_point
+        def add_new_crowd_address(self, params):
+            self.data.crowd_addresses.push(sp.sender)
+            self.data.crowd_equities.push(params.acquisition)
+            self.data.crowd_rents.push(0)
+            self.data.equity_crowd += params.acquisition
+            self.data.equity_financier = sp.as_nat(self.data.equity_financier - params.acquisition)
+    
+        #%%
+    
+    
+    
+    @sp.add_test(name="testingposting")
+    def test():
+        scenario = sp.test_scenario()
+        scenario.h1("Test")
+    
+        tenant_address = sp.address("tz1")
+        financier_address = sp.address("tz2")
+        crowd_address_1 = sp.address("tz1c")
+        crowd_address_2 = sp.address("tz2c")
+        crowd_address_3 = sp.address("tz3c")
+    
+    
+        contract = House_123456789(house_price=200000,
+                                   deposit_amount=30000,
+                                   base_rent=1000,
+                                   tenant_address=tenant_address,
+                                   financier_address=financier_address)
+    
+        scenario += contract
+    
+    
+        test_purchases=True
+        test_rents = True
+        test_crowd_sale = True
+    
+    
+        if test_purchases == True:
+    
+            scenario.h2("tenant buys from financier")
+            scenario += contract.equity_from_financier_to_tenant(amount=abs(1000)).run(sender=tenant_address)
+    
+            scenario.h2("crowd buys from financier")
+            scenario += contract.equity_from_financier_to_crowd(amount=abs(2000)).run(sender=tenant_address)
+    
+            scenario.h2("tenant buys from crowd")
+            scenario += contract.equity_from_crowd_to_tenant(amount=abs(1000)).run(sender=tenant_address)
+    
+    
+        if test_rents == True:
+    
+            scenario.h2("tenant pays rent to financier")
+            scenario += contract.tenant_rental_payment_to_financier(amount=abs(1000)).run(sender=tenant_address)
+    
+            scenario.h2("tenant pays rent to crowd")
+            scenario += contract.tenant_rental_payment_to_crowd(amount=abs(1000)).run(sender=tenant_address)
+    
+            scenario.h2("tenant pays rent to everyone")
+            scenario += contract.tenant_rental_payment_to_everyone(amount=abs(1000)).run(sender=tenant_address)
+    
+    
+        if test_crowd_sale == True:
+            scenario.h2("random person 1 buys some house")
+            scenario += contract.add_new_crowd_address(acquisition=2000).run(sender=crowd_address_1)
+            scenario.h2("random person 2 buys some house")
+            scenario += contract.add_new_crowd_address(acquisition=7000).run(sender=crowd_address_2)
+            scenario.h2("random person 3 buys some house")
+            scenario += contract.add_new_crowd_address(acquisition=4000).run(sender=crowd_address_3)
+            
+        scenario.h2("tenant pays rent to all crowd")
+        scenario += contract.tenant_rental_payment_to_all_crowd(amount=10000).run(sender=tenant_address)
+        
+        
+    
+
 
     
     ```

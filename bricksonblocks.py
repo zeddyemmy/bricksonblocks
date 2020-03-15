@@ -10,8 +10,6 @@ import os
 import re
 import json
 import pprint
-import string
-import folium
 import random
 import requests
 import numpy as np
@@ -34,6 +32,13 @@ from dash.dependencies import Input, Output
 
 #TODO: markdown embeddings
 #TODO: tezos localchain
+environment = 'local'
+
+if environment == 'local':
+    base_path = '/home/amin/RandomPython/bricksonblocks/'
+
+if environment == 'global':
+    base_path = '/home/testpost/bricksonblocks/'
 
 
 
@@ -63,15 +68,12 @@ def haversine(lat1, lon1, lat2, lon2):
 
 mapbox_access_token = 'pk.eyJ1IjoiY29tcGFyZXRoZW1hcmtldGNhcCIsImEiOiJjam10NXVzaHAyYjlxM3BueHJteWU2ZjZyIn0.Wt7mAXyfMki08lHIzGjWTw'
 
-
-#os.chdir('/home/amin/RandomPython')
-
-
-print(dcc.__version__) # 0.6.0 or above is required
+print(dcc.__version__)
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__,
+                external_stylesheets=external_stylesheets)
 
 app.config.suppress_callback_exceptions = True
 
@@ -82,7 +84,6 @@ app.layout = html.Div([
 
 app.title = 'bricksonblocks'
 
-#os.chdir('/home/amin/RandomPython')
 VALID_USERNAME_PASSWORD_PAIRS = [['helloworld', 'incorrect'],
                                  ['bobbytables', 'correcthorsebatterystaple']]
 
@@ -99,11 +100,13 @@ index_page = html.Div([
     dcc.Link('Investor Dashboard', href='/investor-dashboard'),
     html.Br(),
     dcc.Link('Browse Listings', href='/browse-listings'),
+    html.Br(),
+    dcc.Link('Generate Contract', href='/generate-contract'),
 ])
 
 
 
-capitals = pd.read_csv('capitals.csv')
+capitals = pd.read_csv(base_path+'capitals.csv')
 
 
 #%%
@@ -964,25 +967,26 @@ layout_investor_dashboard = html.Div(
             
 
             html.Div([
+                                    
+                html.Div([
+                    html.H5(
+                        children='Dashboard',
+                        style={'font-weight': 'bold',}
+                    ),
+                ],
+                className='eight columns',
+                style={'margin-left':30},
+                ),
                 
                 html.Div([
-                    
-                    html.Div([
-                        html.H5(
-                            children='Dashboard',
-                            style={'font-weight': 'bold',}
-                        ),
-                    ],
-                    style={},
+                    html.Img(
+                        src=app.get_asset_url('calendar.png')
                     ),
-                    
                 ],
-                
                 className='three columns',
-                style={'margin-left':30,},
+                style={'margin-left':100},
                 ),
-
-
+                
             ],
                 
             className='row',
@@ -1516,9 +1520,16 @@ layout_listings = html.Div(
                 html.Div([
                     
                     html.Div([
-                        html.H5(
-                            children='Listing4',
+                        
+# =============================================================================
+#                         html.H5(
+#                             children='Listing3',
+#                         ),
+# =============================================================================
+                        html.Img(
+                            src=app.get_asset_url('hex_machinery.png')
                         ),
+                        
                     ],
                     style={'background-color':'#ffffff'},
                     ),
@@ -1534,9 +1545,16 @@ layout_listings = html.Div(
                 html.Div([
                     
                     html.Div([
-                        html.H5(
-                            children='Listing5',
+                        
+# =============================================================================
+#                         html.H5(
+#                             children='Listing3',
+#                         ),
+# =============================================================================
+                        html.Img(
+                            src=app.get_asset_url('cyclotron_arch.png')
                         ),
+                        
                     ],
                     style={'background-color':'#ffffff'},
                     ),

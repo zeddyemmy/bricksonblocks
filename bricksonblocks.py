@@ -816,7 +816,66 @@ index_page = html.Div(
                    'margin-bottom':30},
             ),
     
-        
+
+            html.Div([
+                                    
+                html.Div([
+                    html.Img(
+                        src=app.get_asset_url('invest_and_grow.png')
+                    ),
+                ],
+                className='six columns',
+                style={'margin-left':30,
+                       'margin-right':0},
+                ),
+                
+                html.Div([
+                    html.Img(
+                        src=app.get_asset_url('fund_and_list.png')
+                    ),
+                ],
+                className='six columns',
+                style={'margin-left':30,
+                       'margin-right':0},
+                ),
+                
+            ],
+                
+            className='row',
+            style={'margin-top':30,
+                   'margin-bottom':30},
+            ),
+
+
+            html.Div([
+                                    
+                html.Div([
+                    html.Img(
+                        src=app.get_asset_url('finance_and_build.png')
+                    ),
+                ],
+                className='six columns',
+                style={'margin-left':30,
+                       'margin-right':0},
+                ),
+                
+                html.Div([
+                    html.Img(
+                        src=app.get_asset_url('program_and_deploy.png')
+                    ),
+                ],
+                className='six columns',
+                style={'margin-left':30,
+                       'margin-right':0},
+                ),
+                
+            ],
+                
+            className='row',
+            style={'margin-top':30,
+                   'margin-bottom':30},
+            ),
+
             
         ],
         className='ten columns',

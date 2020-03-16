@@ -106,12 +106,16 @@ index_page = html.Div([
 
 
 
+
+
+
+
+#%%
+
 capitals = pd.read_csv(base_path+'capitals.csv')
 
 
 #%%
-#Unwary
-
 
 def txdf():
 
@@ -762,6 +766,69 @@ layout_sidebar = html.Div([
            'margin-left': 0,
            'margin-right': 0,},
 
+)
+
+
+
+#%%
+
+
+
+index_page = html.Div(
+    html.Div([
+
+
+        #Top row, identifiers
+        layout_top,
+        
+        layout_sidebar,
+        
+        
+        html.Div([
+            
+            html.Div([
+                                    
+                html.Div([
+                    html.H5(
+                        children='Welcome to Bricks On Blocks',
+                        style={'font-weight': 'bold',}
+                    ),
+                ],
+                className='nine columns',
+                style={'margin-left':30},
+                ),
+                
+                html.Div([
+                    html.Img(
+                        src=app.get_asset_url('calendar.png')
+                    ),
+                ],
+                className='three columns',
+                style={'float':'right',
+                       'margin-left':10,
+                       'margin-right':0},
+                ),
+                
+            ],
+                
+            className='row',
+            style={'margin-top':30,
+                   'margin-bottom':30},
+            ),
+    
+        
+            
+        ],
+        className='ten columns',
+        style={'font-family': 'Cerebri Sans',
+               'background-color': '#e8e8e8',
+               'margin-left':0,
+               'width':'88%'}
+        ),    
+
+        ], className='row',
+        style={'font-family': 'Cerebri Sans'},
+    ),
 )
 
 

@@ -812,17 +812,39 @@ index_page = html.Div(
             ],
                 
             className='row',
-            style={'margin-top':30,
-                   'margin-bottom':30},
+            style={'margin-top':30},
+            ),
+
+
+            html.Div([
+                                    
+                html.Div([
+                    html.H6(
+                        children='Note: This is a demo mockup site - not a production/live tool with full functionality.',
+                    ),
+                ],
+                className='nine columns',
+                style={'margin-left':30},
+                ),
+                
+                
+            ],
+                
+            className='row',
+            #style={'margin-bottom':30},
             ),
     
 
             html.Div([
                                     
                 html.Div([
-                    html.Img(
-                        src=app.get_asset_url('invest_and_grow.png')
-                    ),
+
+                    html.A(
+                        html.Img(
+                            src=app.get_asset_url('invest_and_grow.png')
+                        ),
+                        href='/browse-listings'
+                    )
                 ],
                 className='six columns',
                 style={'margin-left':30,
@@ -860,9 +882,12 @@ index_page = html.Div(
                 ),
                 
                 html.Div([
-                    html.Img(
-                        src=app.get_asset_url('program_and_deploy.png')
-                    ),
+                    html.A(
+                        html.Img(
+                            src=app.get_asset_url('program_and_deploy.png')
+                        ),
+                        href='/generate-contract'
+                    )
                 ],
                 className='six columns',
                 style={'margin-left':30,
@@ -1915,7 +1940,28 @@ layout_generate_contract = html.Div(
                     html.Div([
                         
                         html.Div([
-                            html.H4('Financier Address:'),
+                            html.H5('Tenant Address:'),
+                        ],
+                        className='six columns',
+                        ),
+                        
+                        
+                        html.Div([
+                            dcc.Input(
+                                id='tenant-address'
+                            ),
+                        ],
+                        className='six columns',
+                        )
+                        
+                    ],
+                    className='row',
+                    ),
+
+                    html.Div([
+                        
+                        html.Div([
+                            html.H5('Financier Address:'),
                         ],
                         className='six columns',
                         ),
@@ -1933,7 +1979,70 @@ layout_generate_contract = html.Div(
                     className='row',
                     ),
 
-                    
+
+                    html.Div([
+                        
+                        html.Div([
+                            html.H5('House Price:'),
+                        ],
+                        className='six columns',
+                        ),
+                        
+                        
+                        html.Div([
+                            dcc.Input(
+                                id='house-price'
+                            ),
+                        ],
+                        className='six columns',
+                        )
+                        
+                    ],
+                    className='row',
+                    ),
+
+                    html.Div([
+                        
+                        html.Div([
+                            html.H5('Deposit Amount:'),
+                        ],
+                        className='six columns',
+                        ),
+                        
+                        
+                        html.Div([
+                            dcc.Input(
+                                id='deposit-amount'
+                            ),
+                        ],
+                        className='six columns',
+                        )
+                        
+                    ],
+                    className='row',
+                    ),
+
+                    html.Div([
+                        
+                        html.Div([
+                            html.H5('Base Rent:'),
+                        ],
+                        className='six columns',
+                        ),
+                        
+                        
+                        html.Div([
+                            dcc.Input(
+                                id='base-rent'
+                            ),
+                        ],
+                        className='six columns',
+                        )
+                        
+                    ],
+                    className='row',
+                    ),
+
                 ],
                 
                 className='six columns',
@@ -2002,18 +2111,31 @@ layout_generate_contract = html.Div(
 
 
 @app.callback(Output('smart-contract', 'children'),
-              [Input('contract-name', 'value')])
-def generate_smart_contract(contract_name):
+              [Input('contract-name', 'value'),
+               Input('tenant-address', 'value'),
+               Input('financier-address', 'value'),
+               Input('house-price', 'value'),
+               Input('deposit-amount', 'value'),
+               Input('base-rent', 'value')])
+def generate_smart_contract(contract_name,
+                            tenant_address,
+                            financier_address,
+                            house_price,
+                            deposit_amount,
+                            base_rent):
     
     if contract_name == None:
         contract_name = ''
     
+    contract_name = contract_name.replace(' ', '_')
+    
     instantiate_class = f'class {contract_name}(sp.Contract):'
     
-    initialisation = f'''
+    initialise_class = f'''
         def __init__(self,
                      house_price,
                      deposit_amount,
+                     base_rent,
                      tenant_address,
                      financier_address):
     
@@ -2021,6 +2143,7 @@ def generate_smart_contract(contract_name):
                       equity_tenant = deposit_amount,
                       equity_financier = house_price - deposit_amount,
                       equity_crowd = 0,
+                      base_rent = base_rent,
                       rent_received_financier = 0,
                       rent_received_crowd = 0,
                       tenant_address = tenant_address,
@@ -2042,67 +2165,120 @@ def generate_smart_contract(contract_name):
 # =============================================================================
 
 
+    
+    test_purchases = False
+    test_purchases_code = ''
+    if test_purchases == True:
+        test_purchases_code = f'test_purchases = True'
 
+    test_rents = False
+    test_rents = ''
+    if test_rents == True:
+        test_rents_code = f'test_rents = True'
     
-    code = f'''
-    ```py
+    test_crowd_sale = False
+    test_crowd_sale_flag = ''
+    if test_crowd_sale == True:
+        test_crowd_sale_code = f'test_crowd_sale = True'
+
+
+    test_functions = ''
     
-    import smartpy as sp
+
+    test_code_purchases = f'''
     
-    {instantiate_class}
-    {initialisation}
+        scenario.h1("Testing equity purchases")
+    
+        scenario.h2("tenant buys from financier")
+        scenario += contract.equity_from_financier_to_tenant(amount=abs(1000)).run(sender=tenant_address)
+
+        scenario.h2("crowd buys from financier")
+        scenario += contract.equity_from_financier_to_crowd(amount=abs(2000)).run(sender=tenant_address)
+
+        scenario.h2("tenant buys from crowd")
+        scenario += contract.equity_from_crowd_to_tenant(amount=abs(1000)).run(sender=tenant_address)
+    
+    '''
+    
+
+    test_code_rents = f'''
+
+        scenario.h1("Testing rental payments")    
+
+        scenario.h2("tenant pays rent to financier")
+        scenario += contract.tenant_rental_payment_to_financier(amount=abs(1000)).run(sender=tenant_address)
+
+        scenario.h2("tenant pays rent to crowd")
+        scenario += contract.tenant_rental_payment_to_crowd(amount=abs(1000)).run(sender=tenant_address)
+
+        scenario.h2("tenant pays rent to everyone")
+        scenario += contract.tenant_rental_payment_to_everyone(amount=abs(1000)).run(sender=tenant_address)
+
+        scenario.h2("tenant pays rent to all crowd")
+        scenario += contract.tenant_rental_payment_to_all_crowd(amount=10000).run(sender=tenant_address)    
+    
+    '''
+
+
+    test_code_crowd_sale = f'''
+    
+        scenario.h1("Testing crowd sale")
+        
+        scenario.h2("random person 1 buys some house")
+        scenario += contract.add_new_crowd_address(acquisition=2000).run(sender=crowd_address_1)
+        
+        scenario.h2("random person 2 buys some house")
+        scenario += contract.add_new_crowd_address(acquisition=7000).run(sender=crowd_address_2)
+        
+        scenario.h2("random person 3 buys some house")
+        scenario += contract.add_new_crowd_address(acquisition=4000).run(sender=crowd_address_3)
+    
+    '''
     
     
+    
+    test_code = f'''
     
     @sp.add_test(name="test_{contract_name}")
     def test_{contract_name}():
         scenario = sp.test_scenario()
         scenario.h1("Testing Smart Contract {contract_name}")
-
-
     
-
-
-    contract = House_123456789(house_price=200000,
-                               deposit_amount=30000,
-                               tenant_address=tenant_address,
-                               financier_address=financier_address)
-
+        tenant_address = sp.address("{tenant_address}")
+        financier_address = sp.address("{financier_address}")
+        crowd_address_1 = sp.address("tz1c")
+        crowd_address_2 = sp.address("tz2c")
+        crowd_address_3 = sp.address("tz3c")
     
-    ```
+    
+        contract = {contract_name}(house_price={house_price},
+                                   deposit_amount={deposit_amount},
+                                   base_rent={base_rent},
+                                   tenant_address=tenant_address,
+                                   financier_address=financier_address)
+    
+        scenario += contract
+    
+    
+        {test_code_purchases}
+        {test_code_rents}
+        {test_code_crowd_sale}
+    
     '''
     
+    #test_code = 'nothing'
     
+
     code = f'''
     ```py
     
     
     import smartpy as sp
     
+    {instantiate_class}
     
-    
-    class House_123456789(sp.Contract):
-    
-    
-        def __init__(self,
-                     house_price,
-                     deposit_amount,
-                     base_rent,
-                     tenant_address,
-                     financier_address):
-    
-            self.init(house_price = house_price,
-                      equity_tenant = deposit_amount,
-                      equity_financier = house_price - deposit_amount,
-                      equity_crowd = 0,
-                      base_rent=base_rent,
-                      rent_received_financier = 0,
-                      rent_received_crowd = 0,
-                      tenant_address = tenant_address,
-                      financier_address = financier_address,
-                      crowd_addresses = [],
-                      crowd_equities = [],
-                      crowd_rents = [])
+    {initialise_class}
+
     
     
         #%%
@@ -2186,76 +2362,25 @@ def generate_smart_contract(contract_name):
     
     
     
-    @sp.add_test(name="testingposting")
-    def test():
-        scenario = sp.test_scenario()
-        scenario.h1("Test")
-    
-        tenant_address = sp.address("tz1")
-        financier_address = sp.address("tz2")
-        crowd_address_1 = sp.address("tz1c")
-        crowd_address_2 = sp.address("tz2c")
-        crowd_address_3 = sp.address("tz3c")
-    
-    
-        contract = House_123456789(house_price=200000,
-                                   deposit_amount=30000,
-                                   base_rent=1000,
-                                   tenant_address=tenant_address,
-                                   financier_address=financier_address)
-    
-        scenario += contract
-    
-    
-        test_purchases=True
-        test_rents = True
-        test_crowd_sale = True
-    
-    
-        if test_purchases == True:
-    
-            scenario.h2("tenant buys from financier")
-            scenario += contract.equity_from_financier_to_tenant(amount=abs(1000)).run(sender=tenant_address)
-    
-            scenario.h2("crowd buys from financier")
-            scenario += contract.equity_from_financier_to_crowd(amount=abs(2000)).run(sender=tenant_address)
-    
-            scenario.h2("tenant buys from crowd")
-            scenario += contract.equity_from_crowd_to_tenant(amount=abs(1000)).run(sender=tenant_address)
-    
-    
-        if test_rents == True:
-    
-            scenario.h2("tenant pays rent to financier")
-            scenario += contract.tenant_rental_payment_to_financier(amount=abs(1000)).run(sender=tenant_address)
-    
-            scenario.h2("tenant pays rent to crowd")
-            scenario += contract.tenant_rental_payment_to_crowd(amount=abs(1000)).run(sender=tenant_address)
-    
-            scenario.h2("tenant pays rent to everyone")
-            scenario += contract.tenant_rental_payment_to_everyone(amount=abs(1000)).run(sender=tenant_address)
-    
-    
-        if test_crowd_sale == True:
-            scenario.h2("random person 1 buys some house")
-            scenario += contract.add_new_crowd_address(acquisition=2000).run(sender=crowd_address_1)
-            scenario.h2("random person 2 buys some house")
-            scenario += contract.add_new_crowd_address(acquisition=7000).run(sender=crowd_address_2)
-            scenario.h2("random person 3 buys some house")
-            scenario += contract.add_new_crowd_address(acquisition=4000).run(sender=crowd_address_3)
-            
-        scenario.h2("tenant pays rent to all crowd")
-        scenario += contract.tenant_rental_payment_to_all_crowd(amount=10000).run(sender=tenant_address)
-        
-        
-    
 
+        {test_code}
 
     
     ```
     '''
     
     
+    if contract_name == '':
+        code = f'''
+        
+        ```py
+        
+        import smartpy as sp
+        
+        ```
+        '''
+
+
     return code
     
 

@@ -1869,7 +1869,329 @@ layout_listings = html.Div(
 
 #%%
 
+layout_sample_listing = html.Div(
+    html.Div([
 
+
+        #Top row, identifiers
+        layout_top,
+        
+        layout_sidebar,
+        
+        
+        html.Div([
+            
+            html.Div([
+                                    
+                html.Div([
+                    html.H5(
+                        children='Sample Listing',
+                        style={'font-weight': 'bold',}
+                    ),
+                ],
+                className='nine columns',
+                style={'margin-left':30},
+                ),
+                
+                html.Div([
+                    html.Img(
+                        src=app.get_asset_url('calendar.png')
+                    ),
+                ],
+                className='three columns',
+                style={'float':'right',
+                       'margin-left':10,
+                       'margin-right':0},
+                ),
+                
+            ],
+                
+            className='row',
+            style={'margin-top':30},
+            ),
+
+
+            html.Div([
+                                    
+                html.Div([
+                    html.Img(
+                        src=app.get_asset_url('purchase_page.png')
+                    ),
+                ],
+                className='six columns',
+                style={'margin-left':30,
+                       'margin-right':0},
+                ),
+
+
+                html.Div([
+
+                    html.Div([
+
+
+                        html.Div([
+
+                            html.Div([
+                                
+                                
+                                html.H5('Investment Amount:'),
+    
+                                dcc.Input(
+                                    id='investment-amount',
+                                    value=10000
+                                )
+                                
+                            ],
+                            className='row',
+                            style={'background-color':'#ffffff'}
+                            ),     
+
+
+                            html.Div([
+                                
+                                
+                                html.H5('Holding Period:'),
+    
+                                dcc.Slider(
+                                    id='holding-period',
+                                    min=1,
+                                    max=10,
+                                    marks={i: f'{i}y' for i in range(1, 11)},
+
+                                )
+                                
+                            ],
+                            className='row',
+                            style={'background-color':'#ffffff'}
+                            ),   
+
+
+                            html.Div([
+                                
+                                
+                                html.H5('Expected Return:'),
+    
+                                html.H5(
+                                    id='expected-return'
+                                )
+                                
+                            ],
+                            className='row',
+                            style={'background-color':'#ffffff'}
+                            ),
+                            
+
+
+
+                            html.Div([
+                                
+                                
+                                html.H5('Trade Shares'),
+
+                                html.Div([
+                                    
+                                    html.H6('Quantity:'),
+                                    
+                                    dcc.Input(id='amount-to-trade'),
+                                    
+                                ]
+                                ),
+
+                                html.Div([
+                                    html.Button(
+                                        'Buy'
+                                    ),
+                                    html.Button(
+                                        'Sell'
+                                    )
+                                ]
+                                )
+                                
+                            ],
+                            className='row',
+                            style={'background-color':'#ffffff'}
+                            ),  
+
+
+
+                        ],
+                        className='five columns'
+                        ),                        
+                        
+                        html.Div([
+
+                            dcc.Graph(
+                                id='projected-returns',
+# =============================================================================
+#                                 figure = go.Figure(
+#                                     data=[
+#                                         go.Scatter(
+#                                             x=pd.date_range(datetime.date(2016, 11, 23), periods=1001).tolist(),
+#                                             y=[int(10000)*(1.001**_)for _ in range(1, 1001)],
+#                                             mode='lines',
+#                                             fill='tozeroy',
+#                                             hoveron='points+fills',
+#                                             marker={'color':'#3898ff'},
+#                                         ),
+#                                     ],
+#                                     layout=go.Layout(
+#                                         title='Projected Yield',
+#                                         font={'family':'Cerebri Sans'},
+#                                         plot_bgcolor='#ffffff',
+#                                         xaxis={'title':'Date',
+#                                                'gridcolor':'#e0e0e0'},
+#                                         yaxis={'title':'Gain/Loss',
+#                                                'gridcolor':'#e0e0e0'},
+#                                         margin=dict(
+#                                             l=80,
+#                                             r=40,
+#                                             b=80,
+#                                             t=50,
+#                                             pad=0
+#                                         ),
+#                                     ),
+#                                 ),
+# =============================================================================
+                            ),
+                            
+                        ],
+                        className='six columns'
+                        )
+                        
+                        
+                    ],
+                    className='row',
+                    #style={'width':'60%',
+                    #       'margin-left': 30},
+                    ),                     
+
+                ],
+                className='six columns',
+                style={'margin-left':30,
+                       'margin-right':0},
+                ),
+
+                
+            ],
+                
+            className='row',
+            style={'margin-top':30,
+                   'margin-bottom':30},
+            ),
+
+            
+        ],
+        className='ten columns',
+        style={'font-family': 'Cerebri Sans',
+               'background-color': '#e8e8e8',
+               'margin-left':0,
+               'width':'88%'}
+        ),    
+
+        ], className='row',
+        style={'font-family': 'Cerebri Sans'},
+    ),
+)
+
+@app.callback(Output('expected-return', 'children'),
+              [Input('investment-amount', 'value'),
+               Input('holding-period', 'value')])
+def expected_return(investment_amount,
+                    holding_period):
+    
+    if holding_period == None:
+        holding_period = 1
+    
+    expectation = int(investment_amount)*(1.0004**(holding_period*365))
+    
+    return expectation
+
+
+
+@app.callback(Output('projected-returns', 'figure'),
+              [Input('investment-amount', 'value'),
+               Input('holding-period', 'value')])
+def projected_return(investment_amount,
+                     holding_period):
+    
+    if holding_period == None:
+        holding_period = 1
+    
+    figure = go.Figure(
+        data=[
+            go.Scatter(
+                x=pd.date_range(datetime.date(2016, 11, 23), periods=holding_period*365).tolist(),
+                y=[int(investment_amount)*(1.0004**_)for _ in range(1, holding_period*365)],
+                mode='lines',
+                fill='tozeroy',
+                hoveron='points+fills',
+                marker={'color':'#3898ff'},
+            ),
+        ],
+        layout=go.Layout(
+            title='Projected Yield',
+            font={'family':'Cerebri Sans'},
+            plot_bgcolor='#ffffff',
+            xaxis={'title':'Date',
+                   'gridcolor':'#e0e0e0'},
+            yaxis={'title':'Gain/Loss',
+                   'gridcolor':'#e0e0e0'},
+            margin=dict(
+                l=80,
+                r=40,
+                b=80,
+                t=50,
+                pad=0
+            ),
+        ),
+    ),
+
+
+#demo_addresses:
+    tenant_address = sp.address("tz1gNjyzyT8L6WgNS4AdNMppsSFw76J4aDvT")
+    financier_address = sp.address("tz1Q43ZXZvHwDpaneVN1tZCMz9MNCbgJXQtW")
+    crowd_address_1 = sp.address("tz1ZWgyktxgS93x2Y5FeeJAXQFLHKJ8x3FC7")
+    crowd_address_2 = sp.address("tz1VwmmesDxud2BJEyDKUTV5T5VEP8tGBKGD")
+    crowd_address_3 = sp.address("tz1anoPSWVbHkJV3U6u6NsnPeNyGg9PZk3Dg")
+
+
+# =============================================================================
+#     data=[
+#         go.Scatter(
+#             x=pd.date_range(datetime.date(2016, 11, 23), periods=1001).tolist(),
+#             y=[int(amount)*(1.001**_)for _ in range(1, 1001)],
+#             mode='lines',
+#             fill='tozeroy',
+#             hoveron='points+fills',
+#             marker={'color':'#3898ff'},
+#         ),
+#     ],
+#     layout=go.Layout(
+#         title='Aggregate Performance',
+#         font={'family':'Cerebri Sans'},
+#         plot_bgcolor='#ffffff',
+#         xaxis={'title':'Date',
+#                'gridcolor':'#e0e0e0'},
+#         yaxis={'title':'Gain/Loss',
+#                'gridcolor':'#e0e0e0'},
+#         margin=dict(
+#             l=80,
+#             r=40,
+#             b=80,
+#             t=50,
+#             pad=0
+#         ),
+#     ),
+#     
+#     
+#     
+#     figure = dict(data=data, layout=layout)
+# =============================================================================
+    
+    return figure[0]
+
+
+#%%
 
 
 layout_generate_contract = html.Div(
@@ -2051,6 +2373,127 @@ layout_generate_contract = html.Div(
                 ),
 
 
+                html.Div([
+                    
+                    html.Div([
+                        
+                        html.Div([
+                            html.H5('Has Tenant:'),
+                        ],
+                        className='six columns',
+                        ),
+                        
+                        
+                        html.Div([
+                            dcc.RadioItems(
+                                id='has-tenant',
+                                options=[
+                                    {'label': 'True', 'value': 'True'},
+                                    {'label': 'False', 'value': 'False'},
+                                ],
+                                value='False',
+                                labelStyle={'display': 'inline-block'},
+                            )
+                        ],
+                        className='six columns',
+                        ),
+                        
+                    ],
+                    className='row',
+                    ),
+
+
+                    html.Div([
+                        
+                        html.Div([
+                            html.H5('Restrict Senders:'),
+                        ],
+                        className='six columns',
+                        ),
+                        
+                        
+                        html.Div([
+                            dcc.RadioItems(
+                                id='restrict-senders',
+                                options=[
+                                    {'label': 'True', 'value': 'True'},
+                                    {'label': 'False', 'value': 'False'},
+                                ],
+                                value='False',
+                                labelStyle={'display': 'inline-block'},
+                            )
+                        ],
+                        className='six columns',
+                        ),
+                        
+                    ],
+                    className='row',
+                    ),
+
+
+                    html.Div([
+                        
+                        html.Div([
+                            html.H5('Compress Entrypoints:'),
+                        ],
+                        className='six columns',
+                        ),
+                        
+                        
+                        html.Div([
+                            dcc.RadioItems(
+                                id='compress-entrypoints',
+                                options=[
+                                    {'label': 'True', 'value': 'True'},
+                                    {'label': 'False', 'value': 'False'},
+                                ],
+                                value='True',
+                                labelStyle={'display': 'inline-block'},
+                            )
+                        ],
+                        className='six columns',
+                        ),
+                        
+                    ],
+                    className='row',
+                    ),
+
+
+                    html.Div([
+                        
+                        html.Div([
+                            html.H5('Permit Buybacks:'),
+                        ],
+                        className='six columns',
+                        ),
+                        
+                        
+                        html.Div([
+                            dcc.RadioItems(
+                                id='permit-buybacks',
+                                options=[
+                                    {'label': 'True', 'value': 'True'},
+                                    {'label': 'False', 'value': 'False'},
+                                ],
+                                value='False',
+                                labelStyle={'display': 'inline-block'},
+                            )
+                        ],
+                        className='six columns',
+                        ),
+                        
+                    ],
+                    className='row',
+                    ),
+
+
+                ],
+                
+                className='five columns',
+                style={'margin-left':30,
+                       'background-color':'#ffffff'},
+                ),
+
 
             ],
                 
@@ -2058,6 +2501,32 @@ layout_generate_contract = html.Div(
             style={'margin-bottom':30},
             ),
         
+
+            html.Div([
+                
+                html.Div([
+                    
+                    html.Div([
+                        html.H5(
+                            children='Usage: paste the auto generated smart contract into Smartpy IDE and deploy the transpiled Michelson to the Tezos blockchain.',
+                        ),
+                    ],
+                    style={},
+                    ),
+                    
+                ],
+                
+                className='eleven columns',
+                style={'margin-left':30,},
+                ),
+
+
+            ],
+                
+            className='row',
+            style={'margin-top':30,
+                   'margin-bottom':30},
+            ),
 
 
             html.Div([
@@ -2116,13 +2585,19 @@ layout_generate_contract = html.Div(
                Input('financier-address', 'value'),
                Input('house-price', 'value'),
                Input('deposit-amount', 'value'),
-               Input('base-rent', 'value')])
+               Input('base-rent', 'value'),
+               Input('has-tenant', 'value'),
+               Input('restrict-senders', 'value'),
+               Input('compress-entrypoints', 'value')])
 def generate_smart_contract(contract_name,
                             tenant_address,
                             financier_address,
                             house_price,
                             deposit_amount,
-                            base_rent):
+                            base_rent,
+                            has_tenant,
+                            restrict_senders,
+                            compress_entrypoints):
     
     if contract_name == None:
         contract_name = ''
@@ -2164,7 +2639,54 @@ def generate_smart_contract(contract_name,
 #     '''
 # =============================================================================
 
-
+    
+    tenant_payments = '''
+    
+        @sp.entry_point
+        def tenant_rental_payment_to_financier(self, params):
+            
+            sp.verify(sp.sender == self.data.tenant_address)
+            
+            sp.if self.data.equity_financier > 0:
+                self.data.rent_received_financier += abs(params.amount) * (self.data.equity_financier * 1000000 // self.data.house_price) // 1000000
+    
+                
+        @sp.entry_point
+        def tenant_rental_payment_to_crowd(self, params):
+            sp.if self.data.equity_crowd > 0:
+                self.data.rent_received_crowd += abs(params.amount) * (self.data.equity_crowd * 1000000 // self.data.house_price) // 1000000
+    
+    
+        @sp.entry_point
+        def tenant_rental_payment_to_all_crowd(self, params):
+    
+            sp.if self.data.equity_crowd > 0:
+                self.data.rent_received_crowd += abs(params.amount) * (self.data.equity_crowd * 1000000 // self.data.house_price) // 1000000
+    
+                self.data.crowd_equities = self.data.crowd_equities.rev()
+    
+                sp.for each_equity in self.data.crowd_equities:
+                    self.data.crowd_rents.push(1 * (each_equity * self.data.base_rent * 1000000000 // self.data.house_price) // 1000000000)
+    
+                #sp.for i in sp.range(0, sp.len(self.data.crowd_equities)):
+                #    self.data.crowd_rents[i] += i+7
+    
+                self.data.crowd_equities = self.data.crowd_equities.rev()
+    
+    
+        @sp.entry_point
+        def tenant_rental_payment_to_everyone(self, params):
+            sp.if self.data.equity_financier > 0:
+                self.data.rent_received_financier += abs(params.amount) * (self.data.equity_financier * 1000000 // self.data.house_price) // 1000000
+            sp.if self.data.equity_crowd > 0:
+                self.data.rent_received_crowd += abs(params.amount) * (self.data.equity_crowd * 1000000 // self.data.house_price) // 1000000
+    
+    '''
+    
+    
+    
+    if has_tenant != 'True':
+        tenant_payments = ''
     
     test_purchases = False
     test_purchases_code = ''
@@ -2246,9 +2768,9 @@ def generate_smart_contract(contract_name,
     
         tenant_address = sp.address("{tenant_address}")
         financier_address = sp.address("{financier_address}")
-        crowd_address_1 = sp.address("tz1c")
-        crowd_address_2 = sp.address("tz2c")
-        crowd_address_3 = sp.address("tz3c")
+        crowd_address_1 = sp.address("tz1ZWgyktxgS93x2Y5FeeJAXQFLHKJ8x3FC7")
+        crowd_address_2 = sp.address("tz1VwmmesDxud2BJEyDKUTV5T5VEP8tGBKGD")
+        crowd_address_3 = sp.address("tz1anoPSWVbHkJV3U6u6NsnPeNyGg9PZk3Dg")
     
     
         contract = {contract_name}(house_price={house_price},
@@ -2279,68 +2801,16 @@ def generate_smart_contract(contract_name,
     
     {initialise_class}
 
-    
-    
-        #%%
         
-        def div(a, b):
-            return sp.nat(((a * 1000000000) // b) // 1000000000)
+    {tenant_payments}
     
-        
-        @sp.entry_point
-        def tenant_rental_payment_to_financier(self, params):
-            
-            sp.verify(sp.sender == self.data.tenant_address)
-            
-            sp.if self.data.equity_financier > 0:
-                self.data.rent_received_financier += abs(params.amount) * (self.data.equity_financier * 1000000 // self.data.house_price) // 1000000
-    
-                
-        @sp.entry_point
-        def tenant_rental_payment_to_crowd(self, params):
-            sp.if self.data.equity_crowd > 0:
-                self.data.rent_received_crowd += abs(params.amount) * (self.data.equity_crowd * 1000000 // self.data.house_price) // 1000000
-    
-    
-        @sp.entry_point
-        def tenant_rental_payment_to_all_crowd(self, params):
-    
-            sp.if self.data.equity_crowd > 0:
-                self.data.rent_received_crowd += abs(params.amount) * (self.data.equity_crowd * 1000000 // self.data.house_price) // 1000000
-    
-                self.data.crowd_equities = self.data.crowd_equities.rev()
-    
-                sp.for each_equity in self.data.crowd_equities:
-                    self.data.crowd_rents.push(1 * (each_equity * self.data.base_rent * 1000000000 // self.data.house_price) // 1000000000)
-    
-                #sp.for i in sp.range(0, sp.len(self.data.crowd_equities)):
-                #    self.data.crowd_rents[i] += i+7
-    
-                self.data.crowd_equities = self.data.crowd_equities.rev()
-    
-    
-        @sp.entry_point
-        def tenant_rental_payment_to_everyone(self, params):
-            sp.if self.data.equity_financier > 0:
-                self.data.rent_received_financier += abs(params.amount) * (self.data.equity_financier * 1000000 // self.data.house_price) // 1000000
-            sp.if self.data.equity_crowd > 0:
-                self.data.rent_received_crowd += abs(params.amount) * (self.data.equity_crowd * 1000000 // self.data.house_price) // 1000000
-    
-        #%%
     
         @sp.entry_point
         def equity_from_financier_to_tenant(self, params):
             self.data.equity_tenant += params.amount
             sp.if self.data.equity_financier >= params.amount:
                 self.data.equity_financier = abs(self.data.equity_financier - params.amount)
-    
-    
-        @sp.entry_point
-        def equity_from_financier_to_crowd(self, params):
-            sp.if self.data.equity_financier >= params.amount:
-                self.data.equity_crowd += params.amount
-                self.data.equity_financier = abs(self.data.equity_financier - params.amount)
-    
+        
     
         @sp.entry_point
         def equity_from_crowd_to_tenant(self, params):
@@ -2348,7 +2818,13 @@ def generate_smart_contract(contract_name,
                 self.data.equity_tenant += params.amount
                 self.data.equity_crowd = abs(self.data.equity_crowd - params.amount)
     
-        #%%
+
+        @sp.entry_point
+        def equity_from_financier_to_crowd(self, params):
+            sp.if self.data.equity_financier >= params.amount:
+                self.data.equity_crowd += params.amount
+                self.data.equity_financier = abs(self.data.equity_financier - params.amount)
+
     
         @sp.entry_point
         def add_new_crowd_address(self, params):
@@ -2368,8 +2844,22 @@ def generate_smart_contract(contract_name,
     
     ```
     '''
-    
-    
+
+
+    if compress_entrypoints == 'True':
+        code = code.replace('tenant_rental_payment_to_financier', 'trptf')
+        code = code.replace('tenant_rental_payment_to_crowd', 'trptc')
+        code = code.replace('tenant_rental_payment_to_all_crowd', 'trptac')
+        code = code.replace('tenant_rental_payment_to_everyone', 'trpte')
+        code = code.replace('equity_from_financier_to_tenant', 'efftt')
+        code = code.replace('equity_from_financier_to_crowd', 'efftc')
+        code = code.replace('equity_from_crowd_to_tenant', 'efctt')
+        code = code.replace('add_new_crowd_address', 'anca')
+
+
+
+
+
     if contract_name == '':
         code = f'''
         
@@ -2399,6 +2889,8 @@ def display_page(pathname):
         return layout_investor_dashboard
     elif pathname == '/browse-listings':
         return layout_listings
+    elif pathname == '/sample-listing':
+        return layout_sample_listing
     elif pathname == '/generate-contract':
         return layout_generate_contract
     else:
@@ -2408,5 +2900,8 @@ def display_page(pathname):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+
+
 
 
